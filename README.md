@@ -2,17 +2,34 @@
 
 Recriação completa do **Discord Desktop (`1.0.9262`)** guiada pela engenharia reversa real dos artefatos `app.asar`, `core.asar`, `discord_voice` e `discord_voice.node` utilizando o repositório **[morluto/rea](https://github.com/morluto/rea)**.
 
-## 🚀 Como Iniciar
+## 📥 Download do Aplicativo Desktop Windows (`.EXE`)
+
+Baixe e envie diretamente para seus amigos instalarem ou rodarem no PC deles:
+
+- 💿 **[Baixar Instalador Windows (`Discord-REA-Setup-1.0.0.exe` - 78.7 MB)](https://github.com/berbs-sudo/discord-rea/releases/download/v1.0.0/Discord-REA-Setup-1.0.0.exe)** *(Cria atalho na Área de Trabalho e Menu Iniciar)*
+- 📦 **[Baixar Versão Portátil (`Discord-REA-Portable-1.0.0.exe` - 78.5 MB)](https://github.com/berbs-sudo/discord-rea/releases/download/v1.0.0/Discord-REA-Portable-1.0.0.exe)** *(Abre direto com 2 cliques sem precisar instalar)*
+- 🏷️ **[Página da Release `v1.0.0`](https://github.com/berbs-sudo/discord-rea/releases/tag/v1.0.0)**
+
+---
+
+## 🚀 Como Usar com Amigos em Redes Diferentes (App `.EXE`)
+
+1. **No seu PC (Host da Sala):** Abra o `Discord REA` instalado (ou rode `npm run app`), escolha a aba **🖥️ Criar Sala (Ser Host no meu PC)** e clique em **Iniciar Servidor Local & Entrar**.
+2. No topo do aplicativo, clique no botão verde **`🌐 Multi-Rede Ativo`** e copie o link público `https://...` gerado automaticamente.
+3. **No PC dos seus amigos:** Eles abrem o `Discord REA.exe` que baixaram acima, escolhem a aba **🌐 Entrar na Sala de um Amigo**, colam o seu link `https://...` e clicam em **Conectar à Sala do Amigo** (sem precisar digitar senha de túnel!).
+
+---
+
+## 💻 Como Rodar pelo Código-Fonte
 
 Basta dar dois cliques em **`INICIAR_DISCORD.bat`** ou rodar no terminal:
 
 ```bash
-npm start
+npm install
+npm start       # Inicia servidor + túnel multi-rede
+npm run app     # Abre o aplicativo Desktop Electron
+npm run dist    # Compila os instaladores .exe na pasta dist/
 ```
-
-Depois acesse:
-- **Local:** `http://localhost:3000`
-- **Amigos em Redes Diferentes:** Clique no botão **`🌐 Multi-Rede Ativo`** no topo do app para copiar o link público `https://...` gerado automaticamente!
 
 ---
 
