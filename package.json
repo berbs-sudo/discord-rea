@@ -1,0 +1,69 @@
+{
+  "name": "discord-rea-desktop",
+  "productName": "Discord REA",
+  "version": "1.0.0",
+  "description": "Discord Desktop recriado com morluto/rea — Voz, Vídeo, Compartilhamento de Tela (Go Live) e Multi-Rede",
+  "main": "electron-main.js",
+  "author": "Bernardo (REA Project)",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js",
+    "electron": "electron .",
+    "build:exe": "electron-builder --win nsis portable"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "localtunnel": "^2.0.2",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.rea.discord.desktop",
+    "productName": "Discord REA",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-main.js",
+      "electron-preload.js",
+      "server.js",
+      "public/**/*",
+      "build/icon.ico",
+      "build/icon.png",
+      "data/rea-evidence-summary.json",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Discord REA",
+      "artifactName": "Discord-REA-Setup-${version}.exe"
+    },
+    "portable": {
+      "artifactName": "Discord-REA-Portable-${version}.exe"
+    }
+  }
+}

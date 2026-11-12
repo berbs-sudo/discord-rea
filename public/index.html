@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord (Recriado com morluto/rea) — Voz, Vídeo & Compartilhamento de Tela</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+  <!-- ==================== AUTHENTICATION OVERLAY ==================== -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-main">
+        <div class="auth-title" id="auth-title">Boas-vindas de volta!</div>
+        <div class="auth-subtitle" id="auth-subtitle">Estamos muito animados em te ver novamente!</div>
+        <div id="auth-error" class="auth-error hidden"></div>
+
+        <form id="auth-form">
+          <div class="form-group">
+            <label class="form-label" for="auth-username">Nome de Usuário *</label>
+            <input id="auth-username" class="form-input" type="text" placeholder="ex: bernardo" autocomplete="username"
+              required />
+          </div>
+
+          <div id="auth-displayname-group" class="form-group hidden">
+            <label class="form-label" for="auth-displayname">Nome de Exibição</label>
+            <input id="auth-displayname" class="form-input" type="text" placeholder="Como seus amigos vão te ver" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="auth-password">Senha *</label>
+            <input id="auth-password" class="form-input" type="password" placeholder="••••••••"
+              autocomplete="current-password" required />
+          </div>
+
+          <button type="submit" class="btn-primary" id="auth-submit-btn">Entrar</button>
+        </form>
+
+        <div class="auth-switch" id="auth-switch-box">
+          Precisando de uma conta? <a id="auth-toggle-mode">Registre-se</a>
+        </div>
+      </div>
+
+      <div class="auth-side">
+        <div>
+          <div style="font-size: 36px; margin-bottom: 10px;">⚡🖥️🎧</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--text-header); margin-bottom: 8px;">
+            Discord Multi-Rede (REA)
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+            Recriado a partir da engenharia reversa do Discord Desktop <code>1.0.9262</code> usando
+            <strong>morluto/rea</strong>. Suporta servidores, DMs, amigos, chamadas de voz/vídeo e
+            <strong>Compartilhamento de Tela (Go Live)</strong> em redes diferentes!
+          </p>
+        </div>
+
+        <div
+          style="background: var(--bg-tertiary); padding: 14px; border-radius: 6px; border: 1px solid var(--border-subtle); margin-bottom: 10px;">
+          <div class="form-label" style="margin-bottom: 6px;">Entrada Rápida para Amigos</div>
+          <input id="guest-name-input" class="form-input" type="text" placeholder="Seu apelido (ex: Bernardo)"
+            style="margin-bottom: 10px;" />
+          <button type="button" id="guest-login-btn" class="btn-success" style="width: 100%;">
+            🚀 Entrar Agora sem Cadastro
+          </button>
+        </div>
+
+        <div id="desktop-host-switcher"
+          style="background: var(--bg-tertiary); padding: 12px 14px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+          <div class="form-label" style="margin-bottom: 6px;">🔗 Conectar ao Servidor de um Amigo (.EXE)</div>
+          <div style="display:flex;gap:6px;">
+            <input id="remote-host-input" class="form-input" type="text" placeholder="Código da Sala ou URL"
+              style="padding:7px 10px;font-size:13px;" />
+            <button type="button" id="connect-remote-host-btn" class="btn-primary"
+              style="width:auto;padding:7px 12px;font-size:13px;white-space:nowrap;">
+              Conectar
+            </button>
+          </div>
+          <div id="download-exe-banner" class="hidden" style="margin-top: 10px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN DISCORD APP SHELL ==================== -->
+  <div id="app-shell" class="app-layout hidden">
+    <!-- 1. Server Rail (Leftmost 72px) -->
+    <nav id="server-rail" class="server-rail"></nav>
+
+    <!-- 2. Channels / DMs Sidebar (240px) -->
+    <aside class="sidebar">
+      <div id="sidebar-header" class="sidebar-header"></div>
+      <div id="sidebar-scroll" class="sidebar-scroll"></div>
+
+      <!-- Connected Voice Panel -->
+      <div id="voice-connected-bar" class="voice-connected-bar hidden"></div>
+
+      <!-- Current User Bottom Bar -->
+      <div id="user-panel" class="user-panel"></div>
+    </aside>
+
+    <!-- 3. Main Content Column -->
+    <main class="main-area">
+      <!-- Top Header -->
+      <header id="top-header" class="top-header"></header>
+
+      <div class="content-body">
+        <div class="center-column">
+          <!-- Voice / Video / Go Live Screen Share Stage -->
+          <section id="voice-stage" class="voice-stage hidden"></section>
+
+          <!-- Friends Home View (shown when in DM Home) -->
+          <section id="friends-view" class="friends-view hidden"></section>
+
+          <!-- Text / DM Chat View -->
+          <section id="chat-view" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+            <div id="chat-messages" class="chat-messages"></div>
+
+            <div class="chat-composer-wrap">
+              <div id="reply-banner" class="reply-banner hidden"></div>
+              <div id="attachment-staging" class="attachment-staging hidden"></div>
+
+              <div class="chat-input-box">
+                <button id="upload-btn" class="icon-btn" title="Enviar arquivo, imagem ou vídeo">➕</button>
+                <input id="file-input" type="file" class="hidden" multiple />
+                <textarea id="chat-textarea" class="chat-textarea" rows="1"
+                  placeholder="Conversar em #geral"></textarea>
+                <button id="invite-card-btn" class="icon-btn" title="Enviar Card de Convite do Servidor">📨</button>
+                <button id="emoji-picker-btn" class="icon-btn" title="Emojis">😀</button>
+              </div>
+              <div id="typing-bar" class="typing-bar"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- 4. Right Server Members Sidebar -->
+        <aside id="members-sidebar" class="members-sidebar"></aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS & POPOVERS ==================== -->
+  <div id="modal-root" class="modal-backdrop hidden"></div>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/voice-engine.js"></script>
+  <script src="/app.js"></script>
+</body>
+
+</html>
